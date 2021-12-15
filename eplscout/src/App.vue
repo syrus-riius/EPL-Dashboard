@@ -1,9 +1,8 @@
 <template>
   <button @click="spursFilter()">SPURS</button>
 
-  <div v-if="player17 === true">
-    <div v-for="(player, i) in player17" :key="i">{{ player }}</div>
-  </div>
+  <div v-if="player17 == true">{{ player17 }}</div>
+
   <div></div>
   <img :src="imgURL.replace('${code}', son.code)" />
   <h2>{{ son.first_name + " " + son.second_name }}</h2>
@@ -30,7 +29,7 @@ export default {
       players: Bootstrap_stats.elements,
       son: sonny,
       imgURL: imgURL,
-      player17: "",
+      player17: [],
     };
   },
   methods: {
@@ -43,10 +42,10 @@ export default {
 
         if (player.team === 17) {
           console.log(player.second_name);
-          spursPlayer.push(player.first_name + " " + player.second_name);
+          spursPlayer.push(player);
         }
       }
-      this.player17 = spursPlayer.join("\n");
+      this.player17.push(...spursPlayer);
     },
   },
   components: {},
