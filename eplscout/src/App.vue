@@ -1,51 +1,83 @@
 <template>
-  <button @click="spursFilter()">SPURS</button>
+  <div>{{ selectedTeam }}</div>
+  <div
+    @click="(selectedTeam = teams.id), teamFilter(teams.id)"
+    v-for="(teams, i) in teams"
+    :key="i"
+  >
+    {{ teams.name }}
+  </div>
 
-  <div v-if="player17 == true">{{ player17 }}</div>
-
-  <div></div>
-  <img :src="imgURL.replace('${code}', son.code)" />
+  <!-- <div>{{ filteredPlayer[0] }}</div> -->
+  <br />
+  <div v-for="(a, i) in filteredPlayer" :key="i">
+    {{ `${a.first_name} ${a.second_name}` }}
+  </div>
+  <!-- <div>{{ position[0] }}</div> -->
+  <!-- <img :src="imgURL.replace('${code}', son.code)" />
   <h2>{{ son.first_name + " " + son.second_name }}</h2>
   <h4>value : {{ son.value_season }}</h4>
   <div v-for="(element, i) in son" :key="i">{{ i + ":" + element }}</div>
-  <!-- <div>{{ imgURL.replace("${code}", son.code) }}</div> -->
+  <div>{{ imgURL.replace("${code}", son.code) }}</div> -->
 </template>
 
 <script>
-import Bootstrap_stats from "./json/bootstrap-static.json";
+// import jsonData from "./json/bootstrap-static.json";
 import sonny from "./json/mock_son.json";
+import axios from "axios";
 
+// let dataURL = "https://fantasy.premierleague.com/api/bootstrap-static/";
+let dataURL =
+  "https://raw.githubusercontent.com/syrus-riius/mockserver/main/db.json";
 let imgURL =
   "https://resources.premierleague.com/premierleague/photos/players/110x140/p${code}.png";
 
 export default {
   name: "App",
+  beforeMount() {
+    axios.get(dataURL).then((res) => {
+      this.data = res.data;
+      this.teams = res.data.teams;
+      this.players = res.data.elements;
+      this.player_stats = res.data.elemnet_stats;
+    });
+  },
+  // mounted() {
+  //   console.log(rawData[0]);
+  // },
   data() {
     return {
-      data1: Bootstrap_stats,
-      teams: Bootstrap_stats.teams,
-      spurs: Bootstrap_stats.teams[16],
-      spursCode: 16,
-      players: Bootstrap_stats.elements,
+      data: [],
+      teams: [],
+      players: [],
+      player_stats: [],
+      selectedTeam: 0,
+      filteredPlayer: [],
+      // events: data.events,
+      // game_settings: data.game_settings,
+      // phases: data.phases,
+      // teams: this.data.teams,
+      // players: data.elements,
+      // players_stats: data.element_stats,
+      // position: data.element_types,
+      // spurs: data.teams[16],
+      // spursCode: 16,
       son: sonny,
       imgURL: imgURL,
       player17: [],
     };
   },
+
   methods: {
-    spursFilter() {
-      console.log(this.players.length);
-
-      let spursPlayer = [];
+    teamFilter(teamCode) {
+      this.filteredPlayer = [];
       for (let i = 0; i < this.players.length; i++) {
-        let player = this.players[i];
-
-        if (player.team === 17) {
-          console.log(player.second_name);
-          spursPlayer.push(player);
+        if (this.players[i].team === teamCode) {
+          this.filteredPlayer.push(this.players[i]);
         }
       }
-      this.player17.push(...spursPlayer);
+      console.log(this.filteredPlayer);
+      return this.filteredPlayer;
     },
   },
   components: {},
