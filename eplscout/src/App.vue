@@ -1,5 +1,7 @@
 <template>
   <div>{{ selectedTeam }}</div>
+  <div>{{ selectedPlayer }}</div>
+
   <div
     @click="(selectedTeam = teams.id), teamFilter(teams.id)"
     v-for="(teams, i) in teams"
@@ -8,11 +10,18 @@
     {{ teams.name }}
   </div>
 
-  <!-- <div>{{ filteredPlayer[0] }}</div> -->
+  <!-- <div>{{ teamFilteredPlayer[0] }}</div> -->
   <br />
-  <div v-for="(a, i) in filteredPlayer" :key="i">
-    {{ `${a.first_name} ${a.second_name}` }}
+  <div
+    @click="(selectedPlayer = a.id), pickPlayer(a.id)"
+    v-for="(a, i) in teamFilteredPlayer"
+    :key="i"
+  >
+    {{ `${a.second_name}` }}
   </div>
+
+  <div>{{ pickedPlayer }}</div>
+
   <!-- <div>{{ position[0] }}</div> -->
   <!-- <img :src="imgURL.replace('${code}', son.code)" />
   <h2>{{ son.first_name + " " + son.second_name }}</h2>
@@ -52,7 +61,9 @@ export default {
       players: [],
       player_stats: [],
       selectedTeam: 0,
-      filteredPlayer: [],
+      teamFilteredPlayer: [],
+      pickedPlayer: [],
+      selectedPlayer: 0,
       // events: data.events,
       // game_settings: data.game_settings,
       // phases: data.phases,
@@ -70,14 +81,27 @@ export default {
 
   methods: {
     teamFilter(teamCode) {
-      this.filteredPlayer = [];
+      this.teamFilteredPlayer = [];
+      console.log("picked : " + teamCode);
+
       for (let i = 0; i < this.players.length; i++) {
         if (this.players[i].team === teamCode) {
-          this.filteredPlayer.push(this.players[i]);
+          this.teamFilteredPlayer.push(this.players[i]);
         }
       }
-      console.log(this.filteredPlayer);
-      return this.filteredPlayer;
+      console.log(this.teamFilteredPlayer);
+      return this.teamFilteredPlayer;
+    },
+
+    pickPlayer(playerCode) {
+      this.pickedPlayer = [];
+
+      console.log("picked : " + playerCode);
+      let x = this.teamFilteredPlayer;
+      console.log(x[0]);
+      let findPlayer = x.filter((i) => i.id === playerCode);
+      console.log(findPlayer);
+      this.pickedPlayer = [...findPlayer];
     },
   },
   components: {},
@@ -86,11 +110,13 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Saira Condensed", sans-serif;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  font-size: 25px;
   margin-top: 60px;
 }
 </style>
